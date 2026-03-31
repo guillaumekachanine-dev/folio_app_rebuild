@@ -3,8 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeftRight,
+  ArrowUpRight,
   Check,
   ChevronDown,
+  Clock,
   FileText,
   Filter,
   Info,
@@ -282,9 +284,14 @@ export default function ProspectionBoard({
   };
 
   const fetchPhaseResult = async (prospectId: string, phase: number) => {
-    const response = await fetch(
-      `/api/prospection/prospects/${prospectId}/sector-analysis?phase=${phase}`
-    );
+    const endpoint =
+      phase === 2
+        ? `/api/prospection/prospects/${prospectId}/analysis-phase2-result`
+        : phase === 3
+          ? `/api/prospection/prospects/${prospectId}/analysis-phase3-result`
+          : `/api/prospection/prospects/${prospectId}/sector-analysis?phase=${phase}`;
+
+    const response = await fetch(endpoint);
     if (!response.ok) return null;
     const payload = await response.json();
     return payload?.result ?? null;
@@ -328,7 +335,7 @@ export default function ProspectionBoard({
   const renderAnalysisPanel = () => {
     if (analysisResultsStack) {
       return (
-        <div className="flex h-full min-h-0 flex-col bg-stone-50">
+        <div className="flex h-full min-h-0 flex-col bg-white">
           <div className="flex items-center gap-2 border-b border-white/10 bg-gradient-to-r from-[#FACC15] via-[#EAB308] to-[#B45309] px-5 py-3 shrink-0">
             <div className="flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
@@ -351,7 +358,7 @@ export default function ProspectionBoard({
               analysisResultsStack.items.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-stone-200 bg-white/90 shadow-sm overflow-hidden"
+                  className="rounded-2xl bg-white overflow-hidden"
                 >
                   <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
                     <div>
@@ -386,7 +393,7 @@ export default function ProspectionBoard({
     if (analysisModalProspect) {
       const normalizedPhase1 = normalizePayload(analysisModalProspect.analysis_data);
       return (
-        <div className="flex h-full min-h-0 flex-col bg-stone-50">
+        <div className="flex h-full min-h-0 flex-col bg-white">
           <div className="flex items-center gap-2 border-b border-white/10 bg-gradient-to-r from-[#FACC15] via-[#EAB308] to-[#B45309] px-5 py-3 shrink-0">
             <div className="flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
@@ -433,7 +440,7 @@ export default function ProspectionBoard({
 
     if (analysisPhasePayload) {
       return (
-        <div className="flex h-full min-h-0 flex-col bg-stone-50">
+        <div className="flex h-full min-h-0 flex-col bg-white">
           <div className="flex items-center gap-2 border-b border-white/10 bg-gradient-to-r from-[#FACC15] via-[#EAB308] to-[#B45309] px-5 py-3 shrink-0">
             <div className="flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
@@ -480,15 +487,15 @@ export default function ProspectionBoard({
       );
     }
 
-    return (
-      <div className="flex h-full min-h-0 flex-col bg-stone-50">
+      return (
+        <div className="flex h-full min-h-0 flex-col bg-white">
         <div className="flex items-center gap-2 border-b border-white/10 bg-gradient-to-r from-[#FACC15] via-[#EAB308] to-[#B45309] px-5 py-3 shrink-0">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
             Resultats d&apos;analyse
           </p>
         </div>
         <div className="flex-1 overflow-y-auto p-5">
-          <div className="rounded-2xl border border-dashed border-stone-200 bg-white p-6 text-sm text-stone-400">
+          <div className="rounded-2xl bg-white p-6 text-sm text-stone-400">
             Selectionnez un prospect puis choisissez une analyse a afficher.
           </div>
         </div>
@@ -532,12 +539,12 @@ export default function ProspectionBoard({
   };
 
   const renderContactsPanel = (prospect: Prospect) => (
-    <div className="rounded-[28px] border border-[#C7D1F2] bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#F8F3E6] to-white border-b border-[#E4E8F7]">
+    <div className="rounded-[28px] bg-white overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4">
         <p className="text-[13px] font-semibold uppercase tracking-[0.3em] text-blue-600">
           Contacts
         </p>
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#C7D1F2] bg-white text-blue-600">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-100 text-blue-600">
           <Phone size={16} />
         </div>
       </div>
@@ -675,9 +682,9 @@ export default function ProspectionBoard({
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 min-h-0">
-        <div className="h-[calc(100vh-260px)] overflow-y-auto pr-2 snap-y snap-mandatory">
+        <div className="h-[calc(100vh-200px)] overflow-y-auto pr-2 snap-y snap-mandatory">
           {isLoading ? (
-            <div className="rounded-2xl border border-dashed border-stone-200 bg-white p-6 text-sm text-stone-400">
+            <div className="rounded-2xl border border-stone-200 bg-white p-6 text-sm text-stone-400">
               Chargement des prospects...
             </div>
           ) : viewMode === 'cards' ? (
@@ -686,47 +693,47 @@ export default function ProspectionBoard({
                 const isSelected = selectedProspect?.id === prospect.id;
                 const isFlipped = flippedProspectId === prospect.id;
                 const isEditingIdentity = editingIdentityId === prospect.id;
-                const accentColor = prospect.brand_color?.trim() || '#0EA5E9';
-
                 return (
-                  <div key={prospect.id} className="relative flex flex-col snap-start">
+                  <div
+                    key={prospect.id}
+                    className="relative flex w-full flex-col snap-start xl:max-w-[360px] xl:mx-auto"
+                  >
                     <div
                       onClick={() => handleSelectProspect(prospect)}
                       data-prospect-id={prospect.id}
                       className="relative cursor-pointer rounded-lg overflow-visible"
                     >
-                      <div
-                        className={cn(
-                          'relative h-full transition-[min-height] duration-300 [perspective:1400px] [transform-style:preserve-3d] overflow-visible',
+                        <div
+                          className={cn(
+                          'relative h-full transition-[min-height] duration-300 [transform-style:preserve-3d] overflow-visible',
                           isFlipped
                             ? isEditingIdentity
-                              ? 'min-h-[340px] sm:min-h-[320px]'
-                              : 'min-h-[260px] sm:min-h-[270px]'
-                            : 'min-h-[210px] sm:min-h-[220px]'
-                        )}
-                      >
-                        <div
-                          className="relative h-full w-full transition-transform duration-700 overflow-visible [transform-style:preserve-3d] will-change-transform"
+                              ? 'min-h-[280px] sm:min-h-[260px]'
+                              : 'min-h-[210px] sm:min-h-[220px]'
+                            : 'min-h-[170px] sm:min-h-[180px]'
+                          )}
+                          style={{ perspective: '1400px' }}
+                        >
+                          <div
+                          className="relative h-full w-full transition-transform duration-700 overflow-visible will-change-transform"
                           style={{
                             transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
                             transformOrigin: 'center',
+                            transformStyle: 'preserve-3d',
                           }}
                         >
                           <div
                             className={cn(
-                              'absolute inset-0 rounded-lg border border-l-[4px] p-4 transition-all duration-200 overflow-visible',
-                                  isSelected
-                                    ? 'border-blue-400 bg-blue-50 shadow-md'
-                                    : 'bg-white border-stone-200 shadow-sm hover:shadow-md hover:border-blue-300'
-                                )}
-                                style={{
-                                  backfaceVisibility: 'hidden',
-                                  WebkitBackfaceVisibility: 'hidden',
-                                  transform: 'rotateY(0deg) translateZ(1px)',
-                                  borderLeftColor: accentColor,
-                                }}
-                              >
-                            <div className="flex h-full flex-col gap-5">
+                              'absolute inset-0 rounded-lg border border-stone-200 bg-white px-3 pt-2.5 pb-2 transition-all duration-200 overflow-visible',
+                              isSelected ? 'border-stone-300' : 'border-stone-200'
+                            )}
+                            style={{
+                              backfaceVisibility: 'hidden',
+                              WebkitBackfaceVisibility: 'hidden',
+                              transform: 'rotateY(0deg) translateZ(1px)',
+                            }}
+                          >
+                            <div className="flex h-full flex-col gap-3">
                               <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
                                       {isEditingIdentity ? (
@@ -749,23 +756,23 @@ export default function ProspectionBoard({
                                           </button>
                                       </div>
                                     ) : (
-                                      <p className="line-clamp-2 text-[18px] font-semibold text-stone-900">
+                                      <p className="line-clamp-2 text-[17px] font-semibold text-stone-900">
                                         {prospect.company_name}
                                       </p>
                                     )}
-                                    <div className="mt-2 h-px w-3/5 bg-stone-200" />
+                                    <div className="mt-2 h-px w-2/3 bg-stone-200" />
                                     {prospect.segment && (
-                                      <span className="mt-3 inline-flex rounded-md bg-yellow-400 px-3 py-1 text-xs font-semibold text-white">
+                                      <span className="mt-4 inline-flex rounded-md bg-amber-200 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
                                         {prospect.segment}
                                       </span>
                                     )}
                                   </div>
-                                  <div className="flex h-12 w-20 items-center justify-end">
+                                  <div className="flex h-10 w-16 items-center justify-end">
                                     {prospect.logo_url ? (
                                       <img
                                         src={prospect.logo_url}
                                         alt={prospect.company_name}
-                                        className="max-h-12 max-w-[80px] object-contain"
+                                        className="max-h-10 max-w-[64px] object-contain"
                                       />
                                     ) : (
                                       <div className="text-xs text-stone-300">Logo</div>
@@ -773,7 +780,7 @@ export default function ProspectionBoard({
                                   </div>
                                   </div>
 
-                                <div className="mt-1 flex items-center gap-6 text-sm text-stone-600">
+                                <div className="flex flex-1 items-center gap-4 text-[13px] text-stone-600">
                                   <div className="flex items-center gap-2">
                                     <Users size={16} className="text-blue-600" />
                                     <span>{contactCounts[prospect.id]?.total ?? 0}</span>
@@ -788,7 +795,7 @@ export default function ProspectionBoard({
                                   </div>
                                 </div>
 
-                                <div className="mt-auto flex items-center justify-between pt-4">
+                                <div className="mt-auto flex items-center justify-between pt-0.5">
                                   <div className="flex items-center gap-2">
                                     <button
                                       type="button"
@@ -796,9 +803,9 @@ export default function ProspectionBoard({
                                         event.stopPropagation();
                                         toggleFlip(prospect.id);
                                       }}
-                                      className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-yellow-400 bg-blue-600 text-white shadow-sm"
+                                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-blue-200 bg-blue-500/70 text-white"
                                     >
-                                      <Info size={18} />
+                                      <Info size={14} />
                                     </button>
                                     <div className="relative">
                                       <button
@@ -807,9 +814,9 @@ export default function ProspectionBoard({
                                           event.stopPropagation();
                                           openResultsPicker(prospect);
                                         }}
-                                        className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-yellow-400 bg-blue-600 text-white shadow-sm"
+                                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-blue-200 bg-blue-500/70 text-white"
                                       >
-                                        <Star size={18} />
+                                        <Star size={14} />
                                       </button>
                                     </div>
                                     <button
@@ -822,7 +829,7 @@ export default function ProspectionBoard({
                                         if (status === 'missing') return;
                                         openAnalysisForPhase(prospect, count);
                                       }}
-                                      className="relative flex h-10 min-w-[40px] items-center justify-center rounded-lg border-2 border-yellow-400 bg-white px-2 text-sm font-semibold text-blue-600"
+                                      className="relative flex h-7 min-w-[32px] items-center justify-center rounded-lg border border-blue-200 bg-white px-2 text-[11px] font-semibold text-blue-700/70"
                                     >
                                       ({getPhaseCount(prospect)})
                                       {hasRunningPhase(prospect) && (
@@ -836,7 +843,7 @@ export default function ProspectionBoard({
                                       event.stopPropagation();
                                       setAnalysisPhasePickerProspect(prospect);
                                     }}
-                                    className="rounded-lg border-2 border-yellow-400 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700"
+                                    className="rounded-lg border border-blue-200 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-700/70"
                                   >
                                     Analyse
                                   </button>
@@ -844,10 +851,7 @@ export default function ProspectionBoard({
                               </div>
 
                               <div
-                                className={cn(
-                                  'absolute inset-0 h-full text-left p-4 rounded-lg transition-all duration-200 overflow-visible bg-white border border-stone-200 shadow-sm flex flex-col',
-                                  isSelected ? 'border-stone-300' : 'border-stone-200'
-                                )}
+                                className="absolute inset-0 h-full text-left px-3 pt-2.5 pb-2 rounded-lg border border-stone-200 transition-all duration-200 overflow-visible bg-white flex flex-col"
                                 style={{
                                   backfaceVisibility: 'hidden',
                                   WebkitBackfaceVisibility: 'hidden',
@@ -856,18 +860,18 @@ export default function ProspectionBoard({
                               >
                                 <div className="flex items-start justify-between gap-3">
                                   <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-stone-200 bg-white">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-stone-200 bg-white">
                                       {prospect.logo_url ? (
                                         <img
                                           src={prospect.logo_url}
                                           alt={prospect.company_name}
-                                          className="max-h-10 max-w-[40px] object-contain"
+                                          className="max-h-8 max-w-[32px] object-contain"
                                         />
                                       ) : (
                                         <div className="text-[10px] text-stone-300">Logo</div>
                                       )}
                                     </div>
-                                    <p className="text-lg font-semibold text-stone-900">
+                                    <p className="text-base font-semibold text-stone-900">
                                       {prospect.company_name}
                                     </p>
                                   </div>
@@ -894,8 +898,8 @@ export default function ProspectionBoard({
                                     </button>
                                   </div>
                                 </div>
-                                <div className="mt-4 h-px bg-stone-200" />
-                                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-stone-700">
+                                <div className="mt-2 h-px bg-stone-200" />
+                                <div className="mt-2 grid grid-cols-2 gap-2.5 text-[13px] text-stone-700">
                                   <div>
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-yellow-500">
                                       Secteur
@@ -982,22 +986,20 @@ export default function ProspectionBoard({
             <div className="grid gap-2">
               {prospects.map((prospect) => {
                 const isSelected = selectedProspect?.id === prospect.id;
-                const accentColor = prospect.brand_color?.trim() || '#0EA5E9';
                 return (
                   <div
                     key={prospect.id}
                     onClick={() => handleSelectProspect(prospect)}
                     className={cn(
-                      'rounded-lg border border-l-[4px] bg-white p-3 shadow-sm transition-all',
-                      isSelected ? 'border-blue-400 bg-blue-50' : 'border-stone-200 hover:border-blue-300'
+                      'rounded-lg border border-stone-200 bg-white p-3 transition-all',
+                      isSelected ? 'border-stone-300' : 'border-stone-200'
                     )}
-                    style={{ borderLeftColor: accentColor }}
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="min-w-[180px]">
                         <p className="text-sm font-semibold text-stone-900">{prospect.company_name}</p>
                         {prospect.segment && (
-                          <span className="mt-1 inline-flex rounded-md bg-yellow-400 px-2 py-0.5 text-[11px] font-semibold text-white">
+                          <span className="mt-2 inline-flex rounded-md bg-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
                             {prospect.segment}
                           </span>
                         )}
@@ -1023,17 +1025,17 @@ export default function ProspectionBoard({
                             event.stopPropagation();
                             toggleFlip(prospect.id);
                           }}
-                          className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-yellow-400 bg-blue-600 text-white shadow-sm"
-                        >
-                          <Info size={16} />
-                        </button>
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-blue-200 bg-blue-500/70 text-white"
+                      >
+                        <Info size={14} />
+                      </button>
                         <button
                           type="button"
                           onClick={(event) => {
                             event.stopPropagation();
                             setAnalysisPhasePickerProspect(prospect);
                           }}
-                          className="rounded-lg border-2 border-yellow-400 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700"
+                          className="rounded-lg border border-blue-200 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-700/70"
                         >
                           Analyse
                         </button>
@@ -1049,8 +1051,8 @@ export default function ProspectionBoard({
           )}
         </div>
 
-        <div className="relative h-[calc(100vh-260px)] min-h-0">
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#1E1B4B] bg-stone-50 shadow-xl flex flex-col">
+        <div className="relative h-[calc(100vh-200px)] min-h-0">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-stone-200 bg-white flex flex-col">
             {renderAnalysisPanel()}
           </div>
         </div>
@@ -1071,7 +1073,7 @@ export default function ProspectionBoard({
           }}
         >
           <div
-            className="flex-1 overflow-hidden rounded-2xl border border-[#1E1B4B] bg-stone-50 shadow-2xl flex flex-col"
+            className="flex-1 overflow-hidden rounded-2xl border border-stone-200 bg-white flex flex-col"
             onClick={(event) => event.stopPropagation()}
           >
             {renderAnalysisPanel()}
@@ -1089,7 +1091,7 @@ export default function ProspectionBoard({
             style={{ borderColor: palette.primaryBorder }}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-stone-200 px-5 py-4">
+            <div className="flex items-center justify-between border-b border-stone-200 bg-stone-100 px-5 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
                   Lancez une analyse
@@ -1108,7 +1110,6 @@ export default function ProspectionBoard({
             </div>
             <div className="p-5 grid gap-3">
               {[1, 2, 3, 4, 5].map((phase) => {
-                const status = getPhaseStatus(analysisPhasePickerProspect, phase);
                 const canLaunch = phase === 1 || phase === 3;
                 return (
                   <button
@@ -1124,7 +1125,7 @@ export default function ProspectionBoard({
                     className={cn(
                       'flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition',
                       canLaunch
-                        ? 'border-stone-200 bg-white hover:border-blue-300'
+                        ? 'border-stone-200 bg-white text-stone-700 hover:border-stone-300'
                         : 'border-stone-100 bg-stone-50 text-stone-400'
                     )}
                   >
@@ -1132,9 +1133,15 @@ export default function ProspectionBoard({
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
                         Phase {phase}
                       </p>
-                      <p className="text-sm font-semibold text-stone-900">{phaseLabels[phase]}</p>
+                      <p className={cn('text-sm font-semibold', canLaunch ? 'text-stone-900' : 'text-stone-400')}>
+                        {phaseLabels[phase]}
+                      </p>
                     </div>
-                    <span className="text-[10px] uppercase text-stone-500">{status}</span>
+                    {canLaunch ? (
+                      <ArrowUpRight size={16} className="text-blue-600" />
+                    ) : (
+                      <Clock size={16} className="text-stone-400" />
+                    )}
                   </button>
                 );
               })}
@@ -1155,7 +1162,7 @@ export default function ProspectionBoard({
             style={{ borderColor: palette.primaryBorder }}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-stone-200 px-5 py-4">
+            <div className="flex items-center justify-between border-b border-stone-200 bg-stone-100 px-5 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
                   Consulter les resultats
@@ -1191,7 +1198,7 @@ export default function ProspectionBoard({
                     className={cn(
                       'flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition',
                       isAvailable
-                        ? 'border-stone-200 bg-white hover:border-blue-300'
+                        ? 'border-stone-200 bg-white text-stone-700 hover:border-stone-300'
                         : 'border-stone-100 bg-stone-50 text-stone-400'
                     )}
                   >
@@ -1199,9 +1206,15 @@ export default function ProspectionBoard({
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
                         Phase {phase}
                       </p>
-                      <p className="text-sm font-semibold text-stone-900">{phaseLabels[phase]}</p>
+                      <p className={cn('text-sm font-semibold', isAvailable ? 'text-stone-900' : 'text-stone-400')}>
+                        {phaseLabels[phase]}
+                      </p>
                     </div>
-                    <span className="text-[10px] uppercase text-stone-500">{status}</span>
+                    {isAvailable ? (
+                      <ArrowUpRight size={16} className="text-blue-600" />
+                    ) : (
+                      <Clock size={16} className="text-stone-400" />
+                    )}
                   </button>
                 );
               })}

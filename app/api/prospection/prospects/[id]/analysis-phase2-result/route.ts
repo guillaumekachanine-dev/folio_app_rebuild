@@ -95,3 +95,74 @@ export async function POST(
 
   return NextResponse.json({ result: data?.contenu_json ?? result });
 }
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  let missionId: string | null = null;
+
+  const { data: mapping } = await supabase
+    .schema('lethia_build')
+    .from('prospect_missions')
+    .select('mission_id, created_at')
+    .eq('prospect_id', id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  missionId = mapping?.mission_id ?? null;
+
+  if (!missionId) {
+    const { data: agentClient } = await supabase
+      .schema('agent_business_analyst')
+      .from('clients')
+      .select('id')
+      .eq('source_prospect_id', id)
+      .single();
+
+    if (agentClient?.id) {
+      const { data: mission } = await supabase
+        .schema('agent_business_analyst')
+        .from('missions')
+        .select('id')
+        .eq('client_id', agentClient.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      missionId = mission?.id ?? null;
+    }
+  }
+
+  if (!missionId) {
+    return NextResponse.json({ result: null });
+  }
+
+  const { data, error } = await supabase
+    .schema('agent_business_analyst')
+    .from('resultats_phases')
+    .select('contenu_json')
+    .eq('mission_id', missionId)
+    .eq('phase', 2)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return NextResponse.json({ result: null });
+    }
+    console.error('Error fetching phase 2 result:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ result: data?.contenu_json ?? null });
+}

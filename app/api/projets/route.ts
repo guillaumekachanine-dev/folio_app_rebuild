@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
   const supabase = await createClient();
+  const db = supabase.schema('folio_app');
 
   // Verify user is authenticated
   const {
@@ -14,14 +15,22 @@ export async function GET() {
   }
 
   // Fetch projects for the user
-  const { data: projects, error } = await supabase
+  const { data: projects, error } = await db
     .from('projects')
     .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching projects:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: error.message,
+        code: (error as any).code,
+        details: (error as any).details,
+        hint: (error as any).hint,
+      },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json(projects || []);
@@ -30,6 +39,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
+    const db = supabase.schema('folio_app');
     console.log('[POST /api/projets] Client created');
 
     // Verify user is authenticated
@@ -73,7 +83,7 @@ export async function POST(request: NextRequest) {
     console.log('[POST /api/projets] Creating project:', { name, type });
 
     // Create the project
-    const { data: project, error: projectError } = await supabase
+    const { data: project, error: projectError } = await db
       .from('projects')
       .insert({
         name,
@@ -98,7 +108,15 @@ export async function POST(request: NextRequest) {
 
     if (projectError) {
       console.error('[POST /api/projets] Error creating project:', projectError);
-      return NextResponse.json({ error: projectError.message }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: projectError.message,
+          code: (projectError as any).code,
+          details: (projectError as any).details,
+          hint: (projectError as any).hint,
+        },
+        { status: 500 }
+      );
     }
 
     console.log('[POST /api/projets] Project created:', project);
@@ -110,14 +128,22 @@ export async function POST(request: NextRequest) {
         order_index: index,
       }));
 
-      const { data: insertedPhases, error: phaseInsertError } = await supabase
+      const { data: insertedPhases, error: phaseInsertError } = await db
         .from('project_phases')
         .insert(phaseRows)
         .select('*');
 
       if (phaseInsertError) {
         console.error('[POST /api/projets] Error inserting phases:', phaseInsertError);
-        return NextResponse.json({ error: phaseInsertError.message }, { status: 500 });
+        return NextResponse.json(
+          {
+            error: phaseInsertError.message,
+            code: (phaseInsertError as any).code,
+            details: (phaseInsertError as any).details,
+            hint: (phaseInsertError as any).hint,
+          },
+          { status: 500 }
+        );
       }
 
       const stepsToInsert: Array<{
@@ -156,13 +182,21 @@ export async function POST(request: NextRequest) {
       });
 
       if (stepsToInsert.length) {
-        const { error: stepInsertError } = await supabase
+        const { error: stepInsertError } = await db
           .from('project_steps')
           .insert(stepsToInsert);
 
         if (stepInsertError) {
           console.error('[POST /api/projets] Error inserting steps:', stepInsertError);
-          return NextResponse.json({ error: stepInsertError.message }, { status: 500 });
+          return NextResponse.json(
+            {
+              error: stepInsertError.message,
+              code: (stepInsertError as any).code,
+              details: (stepInsertError as any).details,
+              hint: (stepInsertError as any).hint,
+            },
+            { status: 500 }
+          );
         }
       }
     }

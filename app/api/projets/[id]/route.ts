@@ -7,6 +7,7 @@ export async function GET(
 ) {
   const { id } = await params;
   const supabase = await createClient();
+  const db = supabase.schema('folio_app');
 
   const {
     data: { user },
@@ -16,7 +17,7 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: project, error } = await supabase
+  const { data: project, error } = await db
     .from('projects')
     .select('*')
     .eq('id', id)
@@ -36,6 +37,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   const supabase = await createClient();
+  const db = supabase.schema('folio_app');
 
   const {
     data: { user },
@@ -63,7 +65,7 @@ export async function PUT(
   } = body;
 
   // Update the project
-  const { data: project, error: projectError } = await supabase
+  const { data: project, error: projectError } = await db
     .from('projects')
     .update({
       name,
@@ -90,7 +92,7 @@ export async function PUT(
   }
 
   if (Array.isArray(phases)) {
-    const { error: stepDeleteError } = await supabase
+    const { error: stepDeleteError } = await db
       .from('project_steps')
       .delete()
       .eq('project_id', id);
@@ -100,7 +102,7 @@ export async function PUT(
       return NextResponse.json({ error: stepDeleteError.message }, { status: 500 });
     }
 
-    const { error: phaseDeleteError } = await supabase
+    const { error: phaseDeleteError } = await db
       .from('project_phases')
       .delete()
       .eq('project_id', id);
@@ -117,7 +119,7 @@ export async function PUT(
         order_index: index,
       }));
 
-      const { data: insertedPhases, error: phaseInsertError } = await supabase
+      const { data: insertedPhases, error: phaseInsertError } = await db
         .from('project_phases')
         .insert(phaseRows)
         .select('*');
@@ -163,7 +165,7 @@ export async function PUT(
       });
 
       if (stepsToInsert.length) {
-        const { error: stepInsertError } = await supabase
+        const { error: stepInsertError } = await db
           .from('project_steps')
           .insert(stepsToInsert);
 
@@ -184,6 +186,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   const supabase = await createClient();
+  const db = supabase.schema('folio_app');
 
   const {
     data: { user },
@@ -193,7 +196,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { error } = await supabase.from('projects').delete().eq('id', id);
+  const { error } = await db.from('projects').delete().eq('id', id);
 
   if (error) {
     console.error('Error deleting project:', error);

@@ -36,7 +36,8 @@ export default async function ProspectionPage() {
   );
 
   return (
-    <div className="flex-1 flex flex-col gap-3 px-4 pb-4 pt-0 -mt-4 md:px-6 md:pb-6 md:pt-0 md:-mt-4 lg:-mt-6">
+    <div className="relative min-h-screen flex-1 flex flex-col gap-3 px-4 pb-6 pt-2 md:px-6 md:pb-8 md:pt-2 lg:pt-4">
+      <div className="absolute inset-0 -z-10" style={{ background: '#f2f2f2' }} />
       <ProspectionBoard
         segments={segments}
         sectors={sectors}

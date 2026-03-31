@@ -14,6 +14,7 @@ export default async function ProjectDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const db = supabase.schema('folio_app');
 
   const {
     data: { user },
@@ -27,7 +28,7 @@ export default async function ProjectDetailPage({
     );
   }
 
-  const { data: project, error: projectError } = await supabase
+  const { data: project, error: projectError } = await db
     .from('projects')
     .select('*')
     .eq('id', id)
@@ -43,13 +44,13 @@ export default async function ProjectDetailPage({
 
   let phasesWithSteps: PhaseWithSteps[] = [];
 
-  const { data: phasesData } = await supabase
+  const { data: phasesData } = await db
     .from('project_phases')
     .select('*')
     .eq('project_id', id)
     .order('order_index', { ascending: true });
 
-  const { data: stepsData } = await supabase
+  const { data: stepsData } = await db
     .from('project_steps')
     .select('*')
     .eq('project_id', id)

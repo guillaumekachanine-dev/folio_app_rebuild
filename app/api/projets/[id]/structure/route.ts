@@ -7,6 +7,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   const supabase = await createClient();
+  const db = supabase.schema('folio_app');
 
   const {
     data: { user },
@@ -19,7 +20,7 @@ export async function PUT(
   const body = await request.json().catch(() => ({}));
   const phases = Array.isArray(body?.phases) ? body.phases : [];
 
-  const { error: stepDeleteError } = await supabase
+  const { error: stepDeleteError } = await db
     .from('project_steps')
     .delete()
     .eq('project_id', id);
@@ -28,7 +29,7 @@ export async function PUT(
     return NextResponse.json({ error: stepDeleteError.message }, { status: 500 });
   }
 
-  const { error: phaseDeleteError } = await supabase
+  const { error: phaseDeleteError } = await db
     .from('project_phases')
     .delete()
     .eq('project_id', id);
@@ -47,7 +48,7 @@ export async function PUT(
     order_index: index,
   }));
 
-  const { data: insertedPhases, error: phaseInsertError } = await supabase
+  const { data: insertedPhases, error: phaseInsertError } = await db
     .from('project_phases')
     .insert(phaseRows)
     .select('*');
@@ -93,7 +94,7 @@ export async function PUT(
 
   let insertedSteps: any[] = [];
   if (stepsToInsert.length) {
-    const { data: stepsData, error: stepInsertError } = await supabase
+    const { data: stepsData, error: stepInsertError } = await db
       .from('project_steps')
       .insert(stepsToInsert)
       .select('*');
