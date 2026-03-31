@@ -27,9 +27,8 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 flex items-center gap-1 px-3 py-2 bg-[var(--card)] border-b border-[var(--border)]">
-      {/* Logo mark */}
-      <span className="mr-3 text-[var(--primary)] font-semibold tracking-tight select-none font-[var(--font-geist-mono)] text-sm">
+    <header className="sticky top-0 z-50 flex items-center gap-1 px-4 py-2.5 bg-white/70 backdrop-blur-md border-b border-[var(--border)] shadow-sm">
+      <span className="mr-4 text-[var(--primary)] font-bold tracking-widest select-none font-[var(--font-geist-mono)] text-sm">
         FOLIO
       </span>
 
@@ -42,13 +41,13 @@ export function Header() {
               href={href}
               title={label}
               className={cn(
-                "p-2 rounded-lg transition-colors",
+                "p-2 rounded-xl transition-all",
                 active
-                  ? "bg-[var(--accent)] text-[var(--foreground)]"
-                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--accent)]"
+                  ? "bg-[var(--accent)] text-[var(--primary)]"
+                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--secondary)]"
               )}
             >
-              <Icon size={16} strokeWidth={1.5} />
+              <Icon size={16} strokeWidth={1.75} />
             </Link>
           );
         })}

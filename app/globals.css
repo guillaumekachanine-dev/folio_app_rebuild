@@ -1,26 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e8e8f0;
-  --card: #111118;
-  --card-foreground: #e8e8f0;
-  --popover: #111118;
-  --popover-foreground: #e8e8f0;
-  --primary: #7c6af0;
+  --background: #eef2fb;
+  --foreground: #1a1d2e;
+  --card: #ffffff;
+  --card-foreground: #1a1d2e;
+  --popover: #ffffff;
+  --popover-foreground: #1a1d2e;
+  --primary: #6366f1;
   --primary-foreground: #ffffff;
-  --secondary: #1a1a24;
-  --secondary-foreground: #a0a0b8;
-  --muted: #1a1a24;
-  --muted-foreground: #6b6b88;
-  --accent: #1e1e2e;
-  --accent-foreground: #e8e8f0;
-  --destructive: #e05252;
+  --secondary: #f1f4fd;
+  --secondary-foreground: #4b5280;
+  --muted: #f1f4fd;
+  --muted-foreground: #7c82a8;
+  --accent: #ede9fe;
+  --accent-foreground: #4f46e5;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #222235;
-  --input: #1a1a24;
-  --ring: #7c6af0;
-  --radius: 0.625rem;
+  --border: #e2e7f4;
+  --input: #f5f7fe;
+  --ring: #6366f1;
+  --radius: 1rem;
+
+  /* Bento card accent colors */
+  --color-projets: #6366f1;
+  --color-planning: #0ea5e9;
+  --color-prospection: #f59e0b;
+  --color-budget: #10b981;
+  --color-ai-news: #8b5cf6;
+  --color-formation: #f97316;
 }
 
 * {
@@ -34,6 +42,9 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   background-color: var(--background);
+  background-image: radial-gradient(ellipse at 20% 10%, #dde6ff 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, #e0d8ff 0%, transparent 50%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
