@@ -91,6 +91,28 @@ export default function ProjectDetailView({
     [projectState, phaseState]
   );
 
+  const handleDeleteProject = async (projectId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/projets/${projectId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setIsEditOpen(false);
+        window.location.href = '/projets';
+      } else {
+        alert('Erreur lors de la suppression du projet');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('Erreur lors de la suppression du projet');
+    }
+  };
+
   const handleUpdateProject = async (payload: any) => {
     const response = await fetch(`/api/projets/${projectState.id}`, {
       method: 'PUT',
@@ -484,6 +506,7 @@ export default function ProjectDetailView({
         onClose={() => setIsEditOpen(false)}
         onCreateProject={handleUpdateProject}
         editingProject={editingProject}
+        onDeleteProject={handleDeleteProject}
       />
     </div>
   );

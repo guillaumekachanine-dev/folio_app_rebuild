@@ -174,7 +174,7 @@ export default function ProjetsPage() {
     <div className="min-h-screen p-8" style={{ backgroundColor: '#FAFAFA' }}>
       <div className="max-w-[1400px] mx-auto">
         {/* Controls: Search + New Button + Display Mode Toggle */}
-        <div className="flex items-center gap-4 mb-10">
+        <div className="flex items-center gap-4" style={{ marginBottom: '40px' }}>
           {/* Search Bar */}
           <div className="flex-1 max-w-md flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-gray-200">
             <Search size={18} style={{ color: '#8e8e93' }} />
