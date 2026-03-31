@@ -10,8 +10,9 @@ type PhaseWithSteps = {
 export default async function ProjectDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -29,7 +30,7 @@ export default async function ProjectDetailPage({
   const { data: project, error: projectError } = await supabase
     .from('projects')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (projectError || !project) {
@@ -45,13 +46,13 @@ export default async function ProjectDetailPage({
   const { data: phasesData } = await supabase
     .from('project_phases')
     .select('*')
-    .eq('project_id', params.id)
+    .eq('project_id', id)
     .order('order_index', { ascending: true });
 
   const { data: stepsData } = await supabase
     .from('project_steps')
     .select('*')
-    .eq('project_id', params.id)
+    .eq('project_id', id)
     .order('order_index', { ascending: true });
 
   if (phasesData && phasesData.length) {
