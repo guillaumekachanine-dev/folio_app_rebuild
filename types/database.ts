@@ -4,7 +4,7 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type StepStatus = "backlog" | "planifie" | "en_cours" | "en_validation" | "termine";
-export type ProjectType = "perso" | "pro";
+export type ProjectType = "perso" | "pro" | "formation";
 export type BudgetTransactionType = "income" | "expense";
 export type PlanningMode = "kanban" | "gantt" | "liste";
 export type AiNewsCategory = "business" | "llm" | "frontier" | "youtube";
@@ -19,9 +19,15 @@ export interface Project {
   objective: string | null;
   context: string | null;
   means: string | null;
+  activities: string | null;
   client_id: string | null;
   cover_image_url: string | null;
   is_active: boolean;
+  kpis: Json | null;
+  color: string | null;
+  charge_hours: number | null;
+  priority: number;
+  deadline: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -94,10 +100,19 @@ export interface Client {
   id: string;
   name: string;
   sector: string | null;
+  segment: string | null;
   logo_url: string | null;
   website: string | null;
   status: "prospect" | "contact" | "proposal" | "won" | "lost" | "inactive";
   notes: string | null;
+  business_lines: string | null;
+  hq: string | null;
+  revenue: number | null;
+  employee_count: number | null;
+  brand_color: string | null;
+  potential_score: number | null;
+  analysis_status: string | null;
+  analysis_data: Json | null;
   ai_analysis: Json | null;
   ai_sector_analysis: Json | null;
   last_contacted_at: string | null;
@@ -126,6 +141,22 @@ export interface ContactActivity {
   type: "call" | "email" | "meeting" | "note" | "proposal";
   summary: string;
   date: string;
+  created_at: string;
+}
+
+export interface ProspectPhaseResult {
+  id: string;
+  client_id: string;
+  phase: number;
+  result: Json | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProspectMission {
+  id: string;
+  client_id: string;
+  mission_id: string;
   created_at: string;
 }
 

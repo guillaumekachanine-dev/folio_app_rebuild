@@ -42,3 +42,31 @@ export function getProgressPercent(steps: { status: StepStatus }[]): number {
   const done = steps.filter((s) => s.status === "termine").length;
   return Math.round((done / steps.length) * 100);
 }
+
+type PageTheme = {
+  primary: string;
+  secondary?: string;
+  accent?: string;
+};
+
+const PAGE_THEMES: Record<string, PageTheme> = {
+  projets: { primary: "#4f6ef7" },
+  planning: { primary: "#34aadc" },
+  prospection: { primary: "#ff9500" },
+  budget: { primary: "#34c759" },
+  "ai-news": { primary: "#af52de" },
+  formation: { primary: "#ff6b35" },
+};
+
+export function getPageTheme(page: string): PageTheme | null {
+  return PAGE_THEMES[page] ?? null;
+}
+
+export function hexToRgba(hex: string, alpha = 1) {
+  const clean = hex.replace("#", "");
+  if (clean.length !== 6) return `rgba(0,0,0,${alpha})`;
+  const r = parseInt(clean.substring(0, 2), 16);
+  const g = parseInt(clean.substring(2, 4), 16);
+  const b = parseInt(clean.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}

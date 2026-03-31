@@ -36,7 +36,6 @@
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
 }
 
@@ -57,4 +56,45 @@ html, body {
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+/* Prospection analysis HTML should match the business analysis style */
+.analysis-html {
+  @apply text-sm text-stone-700;
+}
+
+.analysis-html :where(h1, h2, h3) {
+  @apply mt-4 mb-2 px-3 py-2 text-xs font-extrabold uppercase tracking-wide text-white bg-blue-900 border-b border-blue-900 rounded-t-md;
+}
+
+.analysis-html :where(h1, h2, h3):first-child {
+  @apply mt-0;
+}
+
+.analysis-html :where(section) {
+  @apply mb-3 overflow-hidden rounded-lg border border-stone-200 bg-white;
+}
+
+.analysis-html :where(section) > :not(h1):not(h2):not(h3) {
+  @apply px-3 py-2;
+}
+
+.analysis-html :where(p) {
+  @apply text-sm text-stone-700;
+}
+
+.analysis-html :where(ul) {
+  @apply list-disc pl-4 space-y-1;
+}
+
+.analysis-html :where(ol) {
+  @apply list-decimal pl-4 space-y-1;
+}
+
+.analysis-html :where(li) {
+  @apply text-sm text-stone-700;
+}
+
+.analysis-html :where(a) {
+  @apply text-blue-900 underline underline-offset-2;
 }

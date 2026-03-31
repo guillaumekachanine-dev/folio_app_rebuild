@@ -4,54 +4,74 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  FolderKanban,
-  Users,
-  CalendarDays,
+  LayoutGrid,
+  BriefcaseBusiness,
+  Target,
+  GraduationCap,
   Wallet,
-  Newspaper,
-  Settings,
+  Sparkles,
+  SlidersHorizontal,
+  CalendarDays,
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",   label: "Dashboard",   Icon: LayoutDashboard },
-  { href: "/projets",     label: "Projets",      Icon: FolderKanban },
-  { href: "/prospection", label: "Prospection",  Icon: Users },
+  { href: "/dashboard",   label: "Dashboard",   Icon: LayoutGrid },
+  { href: "/projets",     label: "Projets",      Icon: BriefcaseBusiness },
+  { href: "/prospection", label: "Prospection",  Icon: Target },
   { href: "/planning",    label: "Planning",     Icon: CalendarDays },
   { href: "/budget",      label: "Budget",       Icon: Wallet },
-  { href: "/ai-news",     label: "AI News",      Icon: Newspaper },
-  { href: "/parametres",  label: "Paramètres",   Icon: Settings },
+  { href: "/ai-news",     label: "AI News",      Icon: Sparkles },
+  { href: "/parametres",  label: "Paramètres",   Icon: SlidersHorizontal },
 ] as const;
+
+// Per-page accent color for the active pill
+const PAGE_COLORS: Record<string, string> = {
+  "/dashboard":   "#FF6B35",   // vibrant orange
+  "/projets":     "#FF9500",   // orange
+  "/prospection": "#0052CC",   // blue
+  "/planning":    "#0052CC",   // blue
+  "/budget":      "#FFD60A",   // yellow
+  "/ai-news":     "#003A7D",   // dark blue
+  "/parametres":  "#00B4D8",   // cyan
+};
 
 export function Header() {
   const pathname = usePathname();
+  const currentRoot = "/" + pathname.split("/")[1];
 
   return (
-    <header className="relative z-20 flex items-center gap-1 px-4 py-2">
-      <span className="mr-4 text-white font-bold tracking-[0.2em] select-none font-[var(--font-geist-mono)] text-sm drop-shadow-sm">
-        FOLIO
-      </span>
+    <header className="relative z-20 w-full border-b border-white/5" style={{ background: 'linear-gradient(90deg, #1a1f3a 0%, #2d1b4e 50%, #1a1f3a 100%)', backdropFilter: 'blur(12px)' }}>
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-8">
+        {/* Nav */}
+        <nav className="flex items-center gap-6" style={{ marginLeft: '32px' }}>
+          {NAV_ITEMS.map(({ href, label, Icon }) => {
+            const active = currentRoot === href;
+            const color = PAGE_COLORS[href] ?? "#fff";
 
-      <nav className="flex items-center gap-0.5">
-        {NAV_ITEMS.map(({ href, label, Icon }) => {
-          const active = pathname === href || pathname.startsWith(href + "/");
-          return (
-            <Link
-              key={href}
-              href={href}
-              title={label}
-              className={cn(
-                "p-2 rounded-xl transition-all duration-150",
-                active
-                  ? "bg-white/25 text-white shadow-sm"
-                  : "text-white/60 hover:text-white hover:bg-white/15"
-              )}
-            >
-              <Icon size={16} strokeWidth={active ? 2 : 1.75} />
-            </Link>
-          );
-        })}
-      </nav>
+            return (
+              <Link
+                key={href}
+                href={href}
+                title={label}
+                className={cn(
+                  "flex items-center gap-2 transition-all duration-200",
+                  active
+                    ? "rounded-2xl px-3.5 py-2 font-semibold text-white shadow-sm"
+                    : "rounded-2xl p-2.5 text-white/55 hover:bg-white/12 hover:text-white"
+                )}
+                style={active ? { backgroundColor: color } : {}}
+              >
+                <Icon size={17} strokeWidth={1.6} className="flex-shrink-0" />
+                {active && (
+                  <span className="whitespace-nowrap text-sm leading-none">
+                    {label}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
     </header>
   );
 }
