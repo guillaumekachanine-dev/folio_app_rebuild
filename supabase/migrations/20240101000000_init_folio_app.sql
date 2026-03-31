@@ -7,14 +7,13 @@
 -- Create the schema
 CREATE SCHEMA IF NOT EXISTS folio_app;
 
--- ─── Extensions ──────────────────────────────────────────────────────────────
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- gen_random_uuid() is native in PostgreSQL 13+ — no extension needed
 
 
 -- ─── PROJECTS ────────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.projects (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name          TEXT NOT NULL,
   type          TEXT NOT NULL CHECK (type IN ('perso', 'pro')),
   description   TEXT,
@@ -29,7 +28,7 @@ CREATE TABLE folio_app.projects (
 );
 
 CREATE TABLE folio_app.project_phases (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id  UUID NOT NULL REFERENCES folio_app.projects(id) ON DELETE CASCADE,
   name        TEXT NOT NULL,
   order_index INTEGER NOT NULL DEFAULT 0,
@@ -38,7 +37,7 @@ CREATE TABLE folio_app.project_phases (
 );
 
 CREATE TABLE folio_app.project_steps (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   phase_id        UUID NOT NULL REFERENCES folio_app.project_phases(id) ON DELETE CASCADE,
   project_id      UUID NOT NULL REFERENCES folio_app.projects(id) ON DELETE CASCADE,
   name            TEXT NOT NULL,
@@ -57,7 +56,7 @@ CREATE TABLE folio_app.project_steps (
 );
 
 CREATE TABLE folio_app.sub_projects (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   parent_step_id  UUID NOT NULL REFERENCES folio_app.project_steps(id) ON DELETE CASCADE,
   name            TEXT NOT NULL,
   description     TEXT,
@@ -66,7 +65,7 @@ CREATE TABLE folio_app.sub_projects (
 );
 
 CREATE TABLE folio_app.sub_project_steps (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sub_project_id  UUID NOT NULL REFERENCES folio_app.sub_projects(id) ON DELETE CASCADE,
   name            TEXT NOT NULL,
   order_index     INTEGER NOT NULL DEFAULT 0,
@@ -83,7 +82,7 @@ CREATE TABLE folio_app.sub_project_steps (
 );
 
 CREATE TABLE folio_app.project_documents (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id  UUID NOT NULL REFERENCES folio_app.projects(id) ON DELETE CASCADE,
   step_id     UUID REFERENCES folio_app.project_steps(id) ON DELETE SET NULL,
   name        TEXT NOT NULL,
@@ -96,7 +95,7 @@ CREATE TABLE folio_app.project_documents (
 -- ─── PROSPECTION ─────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.clients (
-  id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name                TEXT NOT NULL,
   sector              TEXT,
   logo_url            TEXT,
@@ -112,7 +111,7 @@ CREATE TABLE folio_app.clients (
 );
 
 CREATE TABLE folio_app.client_contacts (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   client_id     UUID NOT NULL REFERENCES folio_app.clients(id) ON DELETE CASCADE,
   first_name    TEXT NOT NULL,
   last_name     TEXT NOT NULL,
@@ -126,7 +125,7 @@ CREATE TABLE folio_app.client_contacts (
 );
 
 CREATE TABLE folio_app.contact_activities (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   contact_id  UUID NOT NULL REFERENCES folio_app.client_contacts(id) ON DELETE CASCADE,
   client_id   UUID NOT NULL REFERENCES folio_app.clients(id) ON DELETE CASCADE,
   type        TEXT NOT NULL CHECK (type IN ('call','email','meeting','note','proposal')),
@@ -139,7 +138,7 @@ CREATE TABLE folio_app.contact_activities (
 -- ─── BUDGET ───────────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.budget_categories (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name        TEXT NOT NULL,
   type        TEXT NOT NULL CHECK (type IN ('income','expense')),
   color       TEXT,
@@ -148,7 +147,7 @@ CREATE TABLE folio_app.budget_categories (
 );
 
 CREATE TABLE folio_app.budget_transactions (
-  id                    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   category_id           UUID REFERENCES folio_app.budget_categories(id) ON DELETE SET NULL,
   label                 TEXT NOT NULL,
   amount                NUMERIC(12,2) NOT NULL,
@@ -165,7 +164,7 @@ CREATE TABLE folio_app.budget_transactions (
 -- ─── PLANNING ─────────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.planning_schedule (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title        TEXT NOT NULL,
   description  TEXT,
   start_date   DATE NOT NULL,
@@ -185,7 +184,7 @@ CREATE TABLE folio_app.planning_schedule (
 -- ─── FORMATIONS ───────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.formations (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name         TEXT NOT NULL,
   description  TEXT,
   provider     TEXT,
@@ -200,7 +199,7 @@ CREATE TABLE folio_app.formations (
 );
 
 CREATE TABLE folio_app.formations_documents (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   formation_id  UUID NOT NULL REFERENCES folio_app.formations(id) ON DELETE CASCADE,
   name          TEXT NOT NULL,
   url           TEXT NOT NULL,
@@ -212,7 +211,7 @@ CREATE TABLE folio_app.formations_documents (
 -- ─── AI NEWS ──────────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.ai_news_digests (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   date           DATE NOT NULL,
   category       TEXT NOT NULL CHECK (category IN ('business','llm','frontier','youtube')),
   content        TEXT NOT NULL,
@@ -222,7 +221,7 @@ CREATE TABLE folio_app.ai_news_digests (
 );
 
 CREATE TABLE folio_app.ai_news_articles (
-  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title         TEXT NOT NULL,
   url           TEXT,
   summary       TEXT NOT NULL,
@@ -237,7 +236,7 @@ CREATE TABLE folio_app.ai_news_articles (
 -- ─── MISC ─────────────────────────────────────────────────────────────────────
 
 CREATE TABLE folio_app.activity_events (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   type         TEXT NOT NULL,
   entity_type  TEXT NOT NULL,
   entity_id    UUID NOT NULL,
@@ -247,7 +246,7 @@ CREATE TABLE folio_app.activity_events (
 );
 
 CREATE TABLE folio_app.item_customizations (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   entity_type      TEXT NOT NULL,
   entity_id        UUID NOT NULL,
   cover_image_url  TEXT,
