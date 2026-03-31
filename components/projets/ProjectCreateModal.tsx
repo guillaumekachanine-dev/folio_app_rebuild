@@ -28,6 +28,7 @@ interface ProjectCreateModalProps {
   onClose: () => void;
   onCreateProject: (data: any) => void;
   editingProject?: any | null;
+  onDeleteProject?: (projectId: string) => void;
 }
 
 const categoryConfig = {
@@ -64,6 +65,7 @@ export default function ProjectCreateModal({
   onClose,
   onCreateProject,
   editingProject,
+  onDeleteProject,
 }: ProjectCreateModalProps) {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
     editingProject ? (editingProject.type as CategoryType) : null
@@ -597,26 +599,40 @@ export default function ProjectCreateModal({
 
               {/* ── Footer ── */}
               <div
-                className="flex items-center justify-end gap-3 p-6"
+                className="flex items-center justify-between gap-3 p-6"
                 style={{ borderTop: '1px solid rgba(0, 0, 0, 0.06)' }}
               >
-                <button
-                  onClick={onClose}
-                  className="px-6 py-2 rounded-lg border transition-colors"
-                  style={{
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                    color: '#1c1c1e',
-                  }}
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleCreateProject}
-                  className="px-6 py-2 rounded-lg text-white font-semibold transition-all duration-200 hover:shadow-lg active:scale-95"
-                  style={{ backgroundColor: category.color }}
-                >
-                  {editingProject ? 'Valider' : 'Créer le projet'}
-                </button>
+                {editingProject && onDeleteProject ? (
+                  <button
+                    onClick={() => onDeleteProject(editingProject.id)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-all duration-200 hover:shadow-lg active:scale-95"
+                    style={{ backgroundColor: '#dc2626' }}
+                  >
+                    <Trash2 size={16} />
+                    <span>Supprimer</span>
+                  </button>
+                ) : (
+                  <div />
+                )}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={onClose}
+                    className="px-6 py-2 rounded-lg border transition-colors"
+                    style={{
+                      borderColor: 'rgba(0, 0, 0, 0.1)',
+                      color: '#1c1c1e',
+                    }}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={handleCreateProject}
+                    className="px-6 py-2 rounded-lg text-white font-semibold transition-all duration-200 hover:shadow-lg active:scale-95"
+                    style={{ backgroundColor: category.color }}
+                  >
+                    {editingProject ? 'Valider' : 'Créer le projet'}
+                  </button>
+                </div>
               </div>
             </>
           )}

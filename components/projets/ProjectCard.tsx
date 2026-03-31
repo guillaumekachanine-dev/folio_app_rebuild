@@ -144,16 +144,16 @@ export default function ProjectCard({
           }}
         >
           <div className="h-full overflow-y-auto flex flex-col">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 -mr-2">
               <h4 className="text-sm font-semibold" style={{ color: '#1c1c1e' }}>
                 Informations générales
               </h4>
               <button
                 onClick={handleEditClick}
-                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
                 title="Modifier le projet"
               >
-                <Edit2 size={16} style={{ color: categoryColor }} />
+                <Edit2 size={18} style={{ color: categoryColor }} />
               </button>
             </div>
 
