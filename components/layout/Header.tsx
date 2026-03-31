@@ -14,21 +14,21 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
-  { href: "/projets", label: "Projets", Icon: FolderKanban },
-  { href: "/prospection", label: "Prospection", Icon: Users },
-  { href: "/planning", label: "Planning", Icon: CalendarDays },
-  { href: "/budget", label: "Budget", Icon: Wallet },
-  { href: "/ai-news", label: "AI News", Icon: Newspaper },
-  { href: "/parametres", label: "Paramètres", Icon: Settings },
+  { href: "/dashboard",   label: "Dashboard",   Icon: LayoutDashboard },
+  { href: "/projets",     label: "Projets",      Icon: FolderKanban },
+  { href: "/prospection", label: "Prospection",  Icon: Users },
+  { href: "/planning",    label: "Planning",     Icon: CalendarDays },
+  { href: "/budget",      label: "Budget",       Icon: Wallet },
+  { href: "/ai-news",     label: "AI News",      Icon: Newspaper },
+  { href: "/parametres",  label: "Paramètres",   Icon: Settings },
 ] as const;
 
 export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 flex items-center gap-1 px-4 py-2.5 bg-white/70 backdrop-blur-md border-b border-[var(--border)] shadow-sm">
-      <span className="mr-4 text-[var(--primary)] font-bold tracking-widest select-none font-[var(--font-geist-mono)] text-sm">
+    <header className="relative z-20 flex items-center gap-1 px-4 py-2">
+      <span className="mr-4 text-white font-bold tracking-[0.2em] select-none font-[var(--font-geist-mono)] text-sm drop-shadow-sm">
         FOLIO
       </span>
 
@@ -41,13 +41,13 @@ export function Header() {
               href={href}
               title={label}
               className={cn(
-                "p-2 rounded-xl transition-all",
+                "p-2 rounded-xl transition-all duration-150",
                 active
-                  ? "bg-[var(--accent)] text-[var(--primary)]"
-                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--secondary)]"
+                  ? "bg-white/25 text-white shadow-sm"
+                  : "text-white/60 hover:text-white hover:bg-white/15"
               )}
             >
-              <Icon size={16} strokeWidth={1.75} />
+              <Icon size={16} strokeWidth={active ? 2 : 1.75} />
             </Link>
           );
         })}
