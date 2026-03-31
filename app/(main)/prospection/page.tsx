@@ -10,15 +10,20 @@ export default async function ProspectionPage() {
     .select('sector, segment')
     .not('sector', 'is', null);
 
+  const typedPairs = (pairs ?? []) as Array<{
+    sector: string | null;
+    segment: string | null;
+  }>;
+
   const sectors = Array.from(
-    new Set((pairs || []).map((pair) => pair.sector).filter(Boolean))
+    new Set(typedPairs.map((pair) => pair.sector).filter(Boolean))
   ) as string[];
 
   const segments = Array.from(
-    new Set((pairs || []).map((pair) => pair.segment).filter(Boolean))
+    new Set(typedPairs.map((pair) => pair.segment).filter(Boolean))
   ) as string[];
 
-  const segmentsBySector = (pairs || []).reduce<Record<string, string[]>>(
+  const segmentsBySector = typedPairs.reduce<Record<string, string[]>>(
     (acc, pair) => {
       const sector = pair.sector;
       const segment = pair.segment;

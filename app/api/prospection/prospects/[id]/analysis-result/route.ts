@@ -16,8 +16,9 @@ async function isAuthorized(request: NextRequest) {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const authorized = await isAuthorized(request);
   if (!authorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -33,7 +34,7 @@ export async function POST(
     .schema('lethia_build')
     .from('prospects')
     .update({ analysis_status: analysisStatus, analysis_data: analysisData })
-    .eq('id', params.id)
+    .eq('id', id)
     .select('analysis_status, analysis_data')
     .single();
 
@@ -46,7 +47,7 @@ export async function POST(
     .schema('agent_business_analyst')
     .from('clients')
     .select('id')
-    .eq('source_prospect_id', params.id)
+    .eq('source_prospect_id', id)
     .single();
 
   if (agentClient?.id) {

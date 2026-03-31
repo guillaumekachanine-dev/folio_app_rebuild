@@ -16,8 +16,9 @@ async function isAuthorized(request: NextRequest) {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const authorized = await isAuthorized(request);
   if (!authorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -33,7 +34,7 @@ export async function POST(
       .schema('agent_business_analyst')
       .from('clients')
       .select('id')
-      .eq('source_prospect_id', params.id)
+      .eq('source_prospect_id', id)
       .single();
 
     if (agentClient?.id) {
@@ -58,7 +59,7 @@ export async function POST(
     .from('prospect_missions')
     .upsert(
       {
-        prospect_id: params.id,
+        prospect_id: id,
         mission_id: missionId,
       },
       { onConflict: 'prospect_id,mission_id' }

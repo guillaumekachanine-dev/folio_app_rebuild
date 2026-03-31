@@ -142,7 +142,7 @@ export async function PUT(
         is_sub_project: boolean;
       }> = [];
 
-      (insertedPhases || []).forEach((phase, index) => {
+      (insertedPhases || []).forEach((phase: any, index: number) => {
         const steps = phases[index]?.steps ?? [];
         steps.forEach((step: { name?: string }, stepIndex: number) => {
           stepsToInsert.push({

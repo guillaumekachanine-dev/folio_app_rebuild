@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -30,7 +31,7 @@ export async function PATCH(
     .schema('lethia_build')
     .from('contacts')
     .update(updates)
-    .eq('id', params.id)
+    .eq('id', id)
     .select()
     .single();
 

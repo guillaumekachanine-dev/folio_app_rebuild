@@ -144,6 +144,26 @@ export interface ContactActivity {
   created_at: string;
 }
 
+// Minimal Supabase schema typing for client helpers
+export type Database = Record<
+  string,
+  {
+    Tables: Record<
+      string,
+      {
+        Row: any;
+        Insert: any;
+        Update: any;
+        Relationships?: any[];
+      }
+    >;
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  }
+>;
+
 export interface ProspectPhaseResult {
   id: string;
   client_id: string;

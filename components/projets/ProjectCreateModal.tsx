@@ -144,7 +144,7 @@ export default function ProjectCreateModal({
 
   if (!isOpen) return null;
 
-  const category = selectedCategory ? categoryConfig[selectedCategory] : null;
+  const category = selectedCategory ? categoryConfig[selectedCategory] : categoryConfig.pro;
 
   const handleCreateProject = () => {
     if (!projectName.trim()) {

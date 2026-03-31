@@ -57,7 +57,8 @@ export default async function ProjectDetailPage({
 
   if (phasesData && phasesData.length) {
     const stepsByPhase = new Map<string, ProjectStep[]>();
-    (stepsData || []).forEach((step) => {
+    const typedSteps = (stepsData as ProjectStep[] | null) ?? [];
+    typedSteps.forEach((step) => {
       const list = stepsByPhase.get(step.phase_id) ?? [];
       list.push(step);
       stepsByPhase.set(step.phase_id, list);

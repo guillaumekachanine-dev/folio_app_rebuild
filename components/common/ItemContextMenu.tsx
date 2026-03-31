@@ -1,11 +1,11 @@
 'use client';
 
-import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { type MouseEvent as ReactMouseEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
 type ItemContextMenuProps = {
   textLabel?: string;
   onText?: () => void;
-  children: (args: { openMenu: (event?: MouseEvent) => void }) => ReactNode;
+  children: (args: { openMenu: (event?: ReactMouseEvent) => void }) => ReactNode;
 };
 
 export default function ItemContextMenu({
@@ -28,7 +28,7 @@ export default function ItemContextMenu({
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  const openMenu = (event?: React.MouseEvent) => {
+  const openMenu = (event?: ReactMouseEvent) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();

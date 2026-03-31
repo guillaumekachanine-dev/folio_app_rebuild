@@ -5,8 +5,9 @@ const WEBHOOK_URL = process.env.N8N_PHASE3_WEBHOOK_URL;
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -27,7 +28,7 @@ export async function POST(
     .schema('agent_business_analyst')
     .from('clients')
     .select('id')
-    .eq('source_prospect_id', params.id)
+    .eq('source_prospect_id', id)
     .single();
 
   if (clientError || !agentClient?.id) {
@@ -51,7 +52,7 @@ export async function POST(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      prospect_id: params.id,
+      prospect_id: id,
       mission_id: missionData.id,
       callback_url: body.callback_url,
     }),

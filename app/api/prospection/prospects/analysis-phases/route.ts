@@ -74,11 +74,11 @@ export async function GET(request: NextRequest) {
     }
 
     const names = (prospects || [])
-      .map((row) => row.company_name?.trim())
+      .map((row: any) => row.company_name?.trim())
       .filter(Boolean) as string[];
 
     if (names.length) {
-      (prospects || []).forEach((row) => {
+      (prospects || []).forEach((row: any) => {
         if (row.id && row.company_name && !clientByProspect[row.id]) {
           const match = clientByName.get(normalizeName(row.company_name));
           if (match) {

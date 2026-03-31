@@ -5,8 +5,9 @@ const WEBHOOK_URL = process.env.N8N_PHASE1_WEBHOOK_URL;
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -21,7 +22,7 @@ export async function GET(
     .schema('lethia_build')
     .from('prospects')
     .select('analysis_status, analysis_data')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error) {
@@ -34,7 +35,7 @@ export async function GET(
     .schema('agent_business_analyst')
     .from('clients')
     .select('id')
-    .eq('source_prospect_id', params.id)
+    .eq('source_prospect_id', id)
     .single();
 
   if (agentClient?.id) {
@@ -72,8 +73,9 @@ export async function GET(
 
 export async function POST(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -88,14 +90,14 @@ export async function POST(
     .schema('lethia_build')
     .from('prospects')
     .update({ analysis_status: 'running' })
-    .eq('id', params.id);
+    .eq('id', id);
 
   if (WEBHOOK_URL) {
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prospect_id: params.id }),
+        body: JSON.stringify({ prospect_id: id }),
       });
     } catch (error) {
       console.error('Error triggering analysis webhook:', error);
@@ -107,8 +109,9 @@ export async function POST(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -123,7 +126,7 @@ export async function DELETE(
     .schema('lethia_build')
     .from('prospects')
     .update({ analysis_status: 'idle', analysis_data: null })
-    .eq('id', params.id)
+    .eq('id', id)
     .select('analysis_status, analysis_data')
     .single();
 

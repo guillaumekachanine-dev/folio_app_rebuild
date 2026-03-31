@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     contactFilteredIds = Array.from(
-      new Set((contactData || []).map((row) => row.prospect_id))
+      new Set((contactData || []).map((row: any) => row.prospect_id))
     ).filter(Boolean) as string[];
 
     if (!contactFilteredIds.length) {
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
     }
 
     searchContactIds = Array.from(
-      new Set((contactMatches || []).map((row) => row.prospect_id))
+      new Set((contactMatches || []).map((row: any) => row.prospect_id))
     ).filter(Boolean) as string[];
   }
 

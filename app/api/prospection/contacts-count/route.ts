@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     { total: number; email: number; phone: number }
   > = {};
   for (const id of prospectIds) counts[id] = { total: 0, email: 0, phone: 0 };
-  data?.forEach((row) => {
+  data?.forEach((row: any) => {
     if (!row.prospect_id) return;
     const entry = counts[row.prospect_id] ?? { total: 0, email: 0, phone: 0 };
     entry.total += 1;

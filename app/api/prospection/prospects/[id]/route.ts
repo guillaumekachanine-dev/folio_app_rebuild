@@ -5,8 +5,9 @@ const BUCKET = process.env.PROSPECTION_LOGOS_BUCKET || 'prospection_logos';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -68,7 +69,7 @@ export async function PATCH(
     const logoFile = formData.get('logo');
     if (logoFile instanceof File) {
       const buffer = Buffer.from(await logoFile.arrayBuffer());
-      const fileName = `${params.id}/${Date.now()}-${logoFile.name}`;
+      const fileName = `${id}/${Date.now()}-${logoFile.name}`;
       const { error: uploadError } = await supabase.storage
         .from(BUCKET)
         .upload(fileName, buffer, { contentType: logoFile.type, upsert: true });
@@ -112,7 +113,7 @@ export async function PATCH(
     .schema('lethia_build')
     .from('prospects')
     .update(updates)
-    .eq('id', params.id)
+    .eq('id', id)
     .select()
     .single();
 

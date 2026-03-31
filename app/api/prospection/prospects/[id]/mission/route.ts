@@ -3,8 +3,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -19,7 +20,7 @@ export async function GET(
     .schema('agent_business_analyst')
     .from('clients')
     .select('id')
-    .eq('source_prospect_id', params.id)
+    .eq('source_prospect_id', id)
     .single();
 
   if (clientError || !agentClient?.id) {
