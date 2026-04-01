@@ -81,6 +81,7 @@ export default async function ProjectDetailPage({
         project_id: project.id,
         name: phase.name,
         order_index: index,
+        resources: [],
         created_at: project.created_at,
         updated_at: project.updated_at,
       },
