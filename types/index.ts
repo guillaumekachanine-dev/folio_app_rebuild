@@ -12,18 +12,18 @@ export type ClientContact = import("./database").Database["folio_app"]["Tables"]
 // ─── Composite / UI types ─────────────────────────────────────────────────────
 
 export interface ProjectWithPhases {
-  project: import("./database").Project;
+  project: Project;
   phases: PhaseWithSteps[];
 }
 
 export interface PhaseWithSteps {
-  phase: import("./database").ProjectPhase;
-  steps: import("./database").ProjectStep[];
+  phase: ProjectPhase;
+  steps: ProjectStep[];
 }
 
 export interface ClientWithContacts {
-  client: import("./database").Client;
-  contacts: import("./database").ClientContact[];
+  client: Client;
+  contacts: ClientContact[];
 }
 
 // Nav items
