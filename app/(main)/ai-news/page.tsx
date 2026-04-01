@@ -1,6 +1,5 @@
 'use client';
 
-import { Nunito } from 'next/font/google';
 import { useEffect, useState } from 'react';
 import {
   ExternalLink,
@@ -14,11 +13,6 @@ import {
   CalendarDays,
   Shuffle,
 } from 'lucide-react';
-
-const nunito = Nunito({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '800', '900'],
-});
 
 /* ─────────────────────────────────── types ─────────────────────────────────── */
 
@@ -124,7 +118,7 @@ function CardHeader({
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p
-          className={nunito.className}
+          className="font-sans"
           style={{ fontWeight: 800, fontSize: 15, color: '#1a1a2e', lineHeight: 1.2, margin: 0 }}
         >
           {title}
@@ -216,7 +210,7 @@ function ArticleContent({ article }: { article: Article | undefined }) {
 
       {/* Title */}
       <p
-        className={nunito.className}
+        className="font-sans"
         style={{ fontWeight: 800, fontSize: 15, color: '#1a1a2e', lineHeight: 1.4, margin: 0, flex: 1 }}
       >
         {article.title}
@@ -292,7 +286,7 @@ export default function AINewsPage() {
             }}
           />
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          <span className={nunito.className} style={{ color: '#888', fontSize: 13, fontWeight: 600 }}>
+          <span className="font-sans" style={{ color: '#888', fontSize: 13, fontWeight: 600 }}>
             Chargement des actualités…
           </span>
         </div>
@@ -331,7 +325,7 @@ export default function AINewsPage() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
               padding: '24px 22px', position: 'relative', zIndex: 1 }}>
               <div>
-                <p className={nunito.className}
+                <p className="font-sans"
                   style={{ fontSize: 32, fontWeight: 900, color: '#1a2d5a', margin: 0, lineHeight: 1.1 }}>
                   AI News
                 </p>
@@ -382,7 +376,7 @@ export default function AINewsPage() {
 
             {digest ? (
               <div style={{ flex: 1, overflow: 'auto', padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <p className={nunito.className}
+                <p className="font-sans"
                   style={{ fontWeight: 800, fontSize: 14, color: '#1a1a2e', margin: 0, lineHeight: 1.4 }}>
                   {digest.summary}
                 </p>
@@ -446,7 +440,7 @@ export default function AINewsPage() {
                       }}
                     >
                       <Shuffle size={20} style={{ color: '#7c4dff' }} />
-                      <span className={nunito.className}
+                      <span className="font-sans"
                         style={{ fontSize: 11, fontWeight: 700, color: '#7c4dff' }}>
                         Au hasard
                       </span>
@@ -475,7 +469,7 @@ export default function AINewsPage() {
                     }}
                   >
                     <span style={{ color: m.color }}>{m.icon}</span>
-                    <span className={nunito.className}
+                    <span className="font-sans"
                       style={{ fontSize: 11, fontWeight: 700, color: isActive ? m.color : '#5a7aaa' }}>
                       {m.label}
                     </span>
@@ -501,7 +495,7 @@ export default function AINewsPage() {
         {/* ── Articles supplémentaires ──────────────────────────────────── */}
         {extra.length > 0 && (
           <div style={{ marginTop: 24 }}>
-            <p className={nunito.className}
+            <p className="font-sans"
               style={{ fontWeight: 800, fontSize: 16, color: '#1a2d5a', marginBottom: 14 }}>
               Plus d'articles
             </p>
