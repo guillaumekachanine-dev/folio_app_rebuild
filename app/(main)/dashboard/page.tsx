@@ -1,13 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Nunito } from 'next/font/google';
-
-const nunito = Nunito({
-  subsets: ['latin'],
-  weight: ['600', '700'],
-  display: 'swap',
-});
 
 const cardConfigs = [
   { title: 'Prospection', href: '/prospection', description: 'Identify and engage high-potential opportunities', gradient: { start: '#0052CC', end: '#0080FF' }, shadow: 'rgba(0, 82, 204, 0.3)' },
@@ -46,7 +39,7 @@ function renderCard(config: typeof cardConfigs[0], gridColumn: string, gridRow: 
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
-      <h2 className={`${nunito.className} text-3xl font-bold tracking-tight`}>
+      <h2 className="text-3xl font-bold tracking-tight">
         {config.title}
       </h2>
       <div

@@ -118,19 +118,6 @@ export default function ProjectCard({
             />
           </div>
 
-          {/* Zone cliquable pour flip - visible et claire */}
-          <div
-            className="absolute bottom-0 left-0 rounded-tr-3xl flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-            style={{
-              width: '35%',
-              height: '35%',
-              background: 'rgba(0,0,0,0.15)',
-              zIndex: 2,
-              backdropFilter: 'blur(2px)'
-            }}
-          >
-            <div className="text-2xl select-none">👆</div>
-          </div>
         </div>
 
         {/* BACK */}

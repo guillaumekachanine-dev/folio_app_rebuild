@@ -97,7 +97,7 @@ export default async function ProjectDetailPage({
           charge_hours: null,
           priority: 3,
           deliverables: null,
-          notes: null,
+          description: null,
           is_sub_project: false,
           created_at: project.created_at,
           updated_at: project.updated_at,

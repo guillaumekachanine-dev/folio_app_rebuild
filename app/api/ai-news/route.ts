@@ -1,21 +1,35 @@
-import { handleAINewsGet, handleAINewsPost } from './shared';
-import { NextRequest, NextResponse } from 'next/server';
+import { handleAINewsGet, handleAINewsPost, normalizeAINewsCategory } from './shared'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const searchParams = Object.fromEntries(request.nextUrl.searchParams);
-  return handleAINewsGet(searchParams);
+type RouteContext = {
+  params: Promise<{ category?: string }>
 }
 
-export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get('x-ingest-token');
+export async function GET(req: NextRequest, context: RouteContext) {
+  const params = (await context.params) ?? {}
+  const routeCategory = (params as { category?: string }).category
+  const queryCategory = req.nextUrl.searchParams.get('category')
+  
+  const category = normalizeAINewsCategory(routeCategory || queryCategory)
 
-  // Validate ingest token
-  if (authHeader !== process.env.N8N_AI_NEWS_INGEST_TOKEN) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  if (!category) {
+    return NextResponse.json({ error: 'Catégorie AI News invalide' }, { status: 404 })
   }
 
-  return handleAINewsPost(request);
+  return handleAINewsGet(category)
 }
+
+export async function POST(req: NextRequest, context: RouteContext) {
+  const params = (await context.params) ?? {}
+  const routeCategory = (params as { category?: string }).category
+  const queryCategory = req.nextUrl.searchParams.get('category')
+  
+  const category = normalizeAINewsCategory(routeCategory || queryCategory)
+
+  if (!category) {
+    return NextResponse.json({ error: 'Catégorie AI News invalide' }, { status: 404 })
+  }
+
+  return handleAINewsPost(req, category)
+}
+

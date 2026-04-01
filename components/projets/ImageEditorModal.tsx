@@ -87,16 +87,22 @@ export default function ImageEditorModal({
           </div>
 
           <div className="space-y-3">
-            {/* Preview - simulating card size */}
+            {/* Preview - simulating card size (300x320px) */}
             <div
-              ref={containerRef}
-              className="relative w-full bg-gray-900 rounded-lg overflow-hidden cursor-move"
-              style={{ aspectRatio: '1 / 1.25' }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
+              className="flex justify-center"
             >
+              <div
+                ref={containerRef}
+                className="relative bg-gray-900 rounded-2xl overflow-hidden cursor-move border border-gray-700"
+                style={{
+                  width: '250px',
+                  height: '270px',
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              >
               <img
                 src={imagePreview}
                 alt="Preview"
@@ -108,6 +114,7 @@ export default function ImageEditorModal({
                 }}
               />
               <div className="absolute inset-0 pointer-events-none border-2 border-white/20" />
+            </div>
             </div>
 
             {/* Controls */}
