@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     }
 
     const seenClient: Record<string, boolean> = {};
-    missions?.forEach((row) => {
+    missions?.forEach((row: { id: string; client_id: string }) => {
       if (seenClient[row.client_id]) return;
       seenClient[row.client_id] = true;
       const prospectId = prospectByClient[row.client_id];
