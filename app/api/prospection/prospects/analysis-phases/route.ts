@@ -120,6 +120,8 @@ export async function GET(request: NextRequest) {
 
   const missionIds = Array.from(new Set(Object.values(missionByProspect)));
 
+  // Phase 2 is stored in `analyses` table (written by external agent)
+  // Phases 3-5 are stored in `resultats_phases` (written by the app)
   let phaseRows: Array<{
     mission_id: string;
     phase: number;
@@ -128,19 +130,39 @@ export async function GET(request: NextRequest) {
     completed_at: string | null;
   }> = [];
 
-  if (missionIds.length) {
-    const { data: phasesData, error: phaseError } = await service
-      .schema('agent_business_analyst')
-      .from('resultats_phases')
-      .select('mission_id, phase, statut, updated_at, completed_at')
-      .in('mission_id', missionIds);
+  const phase2ByMission: Record<string, { status: string; updated_at: string | null }> = {};
 
-    if (phaseError) {
-      console.error('Error fetching analysis phases:', phaseError);
-      return NextResponse.json({ error: phaseError.message }, { status: 500 });
+  if (missionIds.length) {
+    const [phasesResult, analysesResult] = await Promise.all([
+      service
+        .schema('agent_business_analyst')
+        .from('resultats_phases')
+        .select('mission_id, phase, statut, updated_at, completed_at')
+        .in('mission_id', missionIds)
+        .in('phase', [3, 4, 5]),
+      service
+        .schema('agent_business_analyst')
+        .from('analyses')
+        .select('mission_id, statut, updated_at')
+        .in('mission_id', missionIds)
+        .eq('phase', 2)
+        .eq('statut', 'generated')
+        .not('contenu', 'is', null),
+    ]);
+
+    if (phasesResult.error) {
+      console.error('Error fetching analysis phases:', phasesResult.error);
+      return NextResponse.json({ error: phasesResult.error.message }, { status: 500 });
     }
 
-    phaseRows = phasesData || [];
+    phaseRows = phasesResult.data || [];
+
+    // Build phase 2 status map — presence of a row in analyses means the analysis is done
+    (analysesResult.data || []).forEach((row: { mission_id: string; statut: string | null; updated_at: string | null }) => {
+      if (!phase2ByMission[row.mission_id]) {
+        phase2ByMission[row.mission_id] = { status: 'done', updated_at: row.updated_at };
+      }
+    });
   }
 
   const grouped: Record<string, Record<number, { status: string; updated_at: string | null }>> = {};
@@ -148,7 +170,10 @@ export async function GET(request: NextRequest) {
     const status =
       row.statut === 'running'
         ? 'running'
-        : row.completed_at || row.statut === 'generated' || row.statut === 'done'
+        : row.completed_at ||
+            row.statut === 'generated' ||
+            row.statut === 'done' ||
+            row.statut === 'completed'
           ? 'done'
           : 'ready';
     if (!grouped[row.mission_id]) grouped[row.mission_id] = {};
@@ -161,12 +186,12 @@ export async function GET(request: NextRequest) {
     const phases = [
       { phase: 1, status: phase1Status, updated_at: null },
       ...DEFAULT_PHASES.map((phase) => {
-      const entry = missionId ? grouped[missionId]?.[phase] : null;
-      return {
-        phase,
-        status: entry ? entry.status : 'missing',
-        updated_at: entry?.updated_at ?? null,
-      };
+        if (phase === 2) {
+          const entry = missionId ? phase2ByMission[missionId] : null;
+          return { phase: 2, status: entry ? entry.status : 'missing', updated_at: entry?.updated_at ?? null };
+        }
+        const entry = missionId ? grouped[missionId]?.[phase] : null;
+        return { phase, status: entry ? entry.status : 'missing', updated_at: entry?.updated_at ?? null };
       }),
     ];
     const completed_count = phases.filter((phase) => phase.status === 'done').length;

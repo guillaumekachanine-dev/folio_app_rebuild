@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 const SHARED_SECRET = process.env.N8N_SHARED_SECRET;
@@ -110,6 +110,9 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // All agent_business_analyst tables have RLS policies for {anon} only.
+  // The authenticated client gets zero rows → use service role for all agent queries.
+  const service = createAdminClient();
   let missionId: string | null = null;
 
   const { data: mapping } = await supabase
@@ -124,7 +127,7 @@ export async function GET(
   missionId = mapping?.mission_id ?? null;
 
   if (!missionId) {
-    const { data: agentClient } = await supabase
+    const { data: agentClient } = await service
       .schema('agent_business_analyst')
       .from('clients')
       .select('id')
@@ -132,7 +135,7 @@ export async function GET(
       .single();
 
     if (agentClient?.id) {
-      const { data: mission } = await supabase
+      const { data: mission } = await service
         .schema('agent_business_analyst')
         .from('missions')
         .select('id')
@@ -148,12 +151,18 @@ export async function GET(
     return NextResponse.json({ result: null });
   }
 
-  const { data, error } = await supabase
+  // Phase 2 results are in `analyses` (written by external agent).
+  // Multiple rows per mission (retries, errors) — take the most recent generated one.
+  const { data, error } = await service
     .schema('agent_business_analyst')
-    .from('resultats_phases')
-    .select('contenu_json')
+    .from('analyses')
+    .select('contenu')
     .eq('mission_id', missionId)
     .eq('phase', 2)
+    .eq('statut', 'generated')
+    .not('contenu', 'is', null)
+    .order('updated_at', { ascending: false })
+    .limit(1)
     .single();
 
   if (error) {
@@ -164,5 +173,5 @@ export async function GET(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ result: data?.contenu_json ?? null });
+  return NextResponse.json({ result: data?.contenu ?? null });
 }

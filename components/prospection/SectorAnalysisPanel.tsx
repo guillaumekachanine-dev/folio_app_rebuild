@@ -113,12 +113,12 @@ export default function SectorAnalysisPanel({
     return null;
   };
 
-  const market = pickSection(['marche', 'market', 'marche_cible']);
-  const actors = pickSection(['acteurs', 'actors', 'participants']);
-  const valueChain = pickSection(['chaine_de_valeur', 'value_chain', 'chaine_valeur']);
-  const regulation = pickSection(['reglementation', 'regulation', 'regles']);
-  const competition = pickSection(['concurrence', 'competition']);
-  const clientele = pickSection(['clientele', 'clients', 'customer']);
+  const market = pickSection(['volume_marche', 'marche', 'market', 'marche_cible']);
+  const actors = pickSection(['acteurs_cles', 'acteurs', 'actors', 'participants']);
+  const valueChain = pickSection(['chaine_valeur', 'chaine_de_valeur', 'value_chain']);
+  const regulation = pickSection(['environnement_normatif', 'reglementation', 'regulation', 'regles']);
+  const competition = pickSection(['analyse_concurrentielle', 'concurrence', 'competition']);
+  const clientele = pickSection(['segment_clientele', 'clientele', 'clients', 'customer']);
   const resolvedName = companyName ?? prospect?.company_name ?? 'Prospect';
   const resolvedLogo = logoUrl ?? prospect?.logo_url ?? null;
 
