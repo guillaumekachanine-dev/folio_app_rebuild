@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         deadline: string | null;
         charge_hours: number | null;
         deliverables: string | null;
-        notes: string | null;
+        description: string | null;
         is_sub_project: boolean;
       }> = [];
 
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
             deadline: null,
             charge_hours: null,
             deliverables: null,
-            notes: null,
+            description: null,
             is_sub_project: false,
           });
         });

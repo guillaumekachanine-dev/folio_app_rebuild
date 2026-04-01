@@ -1,11 +1,11 @@
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 const DEFAULT_PHASES = [2, 3, 4, 5];
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
-  const service = createServiceClient();
+  const service = createAdminClient();
 
   const {
     data: { user },

@@ -22,14 +22,18 @@ interface AINewsDigest {
   articles_count?: number;
 }
 
-export async function handleAINewsGet(
-  searchParams?: Record<string, string | string[]>
-) {
+export function normalizeAINewsCategory(category: string | undefined | null): string | null {
+  if (!category) return 'all'
+  const validCategories = ['business', 'llm', 'frontier', 'youtube', 'all']
+  const normalized = category.toLowerCase()
+  return validCategories.includes(normalized) ? normalized : null
+}
+
+export async function handleAINewsGet(category: string | null = 'all') {
   try {
     const supabase = await createClient();
 
-    // Get category filter
-    const category = (searchParams?.category as string) || null;
+    // Get category filter directly from argument
 
     // Get articles
     const articleQuery = supabase
@@ -80,7 +84,7 @@ export async function handleAINewsGet(
   }
 }
 
-export async function handleAINewsPost(request: NextRequest) {
+export async function handleAINewsPost(request: NextRequest, category: string | null = 'business') {
   try {
     const supabase = await createClient();
 

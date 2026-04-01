@@ -49,7 +49,7 @@ CREATE TABLE folio_app.project_steps (
   charge_hours    NUMERIC(6,1),
   priority        INTEGER NOT NULL DEFAULT 3 CHECK (priority BETWEEN 1 AND 5),
   deliverables    TEXT,
-  notes           TEXT,
+  description     TEXT,
   is_sub_project  BOOLEAN NOT NULL DEFAULT false,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
