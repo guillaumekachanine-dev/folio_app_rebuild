@@ -633,7 +633,7 @@ export default function ProjectDetailView({
             <input
               type="text"
               value={stepForm.name ?? editingStep.name ?? ''}
-              onChange={(e) => setStepForm((f) => ({ ...f, name: e.target.value }))}
+              onChange={(e) => setStepForm((f: Partial<ProjectStep>) => ({ ...f, name: e.target.value }))}
               style={{ border: '1px solid #e7e9ee', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#1e293b', background: '#f8f9fb', outline: 'none' }}
             />
           </div>
@@ -644,7 +644,7 @@ export default function ProjectDetailView({
             <textarea
               rows={2}
               value={stepForm.description ?? editingStep.description ?? ''}
-              onChange={(e) => setStepForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) => setStepForm((f: Partial<ProjectStep>) => ({ ...f, description: e.target.value }))}
               style={{ border: '1px solid #e7e9ee', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#1e293b', background: '#f8f9fb', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
             />
           </div>
@@ -658,7 +658,7 @@ export default function ProjectDetailView({
                 return (
                   <button
                     key={s}
-                    onClick={() => setStepForm((f) => ({ ...f, status: s }))}
+                    onClick={() => setStepForm((f: Partial<ProjectStep>) => ({ ...f, status: s }))}
                     style={{
                       padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
                       border: `1.5px solid ${active ? STATUS_COLORS[s] : '#e7e9ee'}`,
@@ -683,7 +683,7 @@ export default function ProjectDetailView({
                 <input
                   type="date"
                   value={(stepForm[key] ?? (editingStep as any)[key] ?? '').slice(0, 10)}
-                  onChange={(e) => setStepForm((f) => ({ ...f, [key]: e.target.value || null }))}
+                  onChange={(e) => setStepForm((f: Partial<ProjectStep>) => ({ ...f, [key]: e.target.value || null }))}
                   style={{ border: '1px solid #e7e9ee', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#1e293b', background: '#f8f9fb', outline: 'none' }}
                 />
               </div>
@@ -696,7 +696,7 @@ export default function ProjectDetailView({
               <label style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Priorité (1–5)</label>
               <select
                 value={stepForm.priority ?? editingStep.priority ?? 3}
-                onChange={(e) => setStepForm((f) => ({ ...f, priority: Number(e.target.value) }))}
+                onChange={(e) => setStepForm((f: Partial<ProjectStep>) => ({ ...f, priority: Number(e.target.value) }))}
                 style={{
                   border: '1px solid #e7e9ee',
                   borderRadius: 8,
@@ -720,7 +720,7 @@ export default function ProjectDetailView({
               <input
                 type="number" min={0}
                 value={stepForm.charge_hours ?? editingStep.charge_hours ?? ''}
-                onChange={(e) => setStepForm((f) => ({ ...f, charge_hours: e.target.value ? Number(e.target.value) : null }))}
+                onChange={(e) => setStepForm((f: Partial<ProjectStep>) => ({ ...f, charge_hours: e.target.value ? Number(e.target.value) : null }))}
                 style={{ border: '1px solid #e7e9ee', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#1e293b', background: '#f8f9fb', outline: 'none' }}
               />
             </div>
@@ -732,7 +732,7 @@ export default function ProjectDetailView({
             <textarea
               rows={2}
               value={stepForm.deliverables ?? editingStep.deliverables ?? ''}
-              onChange={(e) => setStepForm((f) => ({ ...f, deliverables: e.target.value }))}
+              onChange={(e) => setStepForm((f: Partial<ProjectStep>) => ({ ...f, deliverables: e.target.value }))}
               style={{ border: '1px solid #e7e9ee', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#1e293b', background: '#f8f9fb', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
             />
           </div>
