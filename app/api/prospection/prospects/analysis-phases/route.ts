@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   const prospectByClient: Record<string, string> = {};
   const clientByName = new Map<string, { id: string; data: any }>();
 
-  agentClients?.forEach((row) => {
+  agentClients?.forEach((row: { id: string; nom: string | null; data: any }) => {
     if (row?.nom) {
       clientByName.set(normalizeName(row.nom), { id: row.id, data: row.data });
     }
